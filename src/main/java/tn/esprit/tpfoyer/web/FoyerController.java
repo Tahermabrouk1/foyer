@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import tn.esprit.tpfoyer.entities.Foyer;
 import tn.esprit.tpfoyer.services.FoyerService;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,8 +14,8 @@ import java.util.Optional;
 @AllArgsConstructor
 @RequestMapping("/foyer")
 public class FoyerController {
-    private FoyerService foyerService;
 
+    private FoyerService foyerService;
     @GetMapping
     public ResponseEntity<List<Foyer>> getAllFoyer() {
         List<Foyer> foyers = foyerService.getAllFoyers();
@@ -22,10 +23,12 @@ public class FoyerController {
     }
 
     @PostMapping
-    public ResponseEntity<Foyer> addBloc(@RequestBody Foyer foyer) {
+    public ResponseEntity<Foyer> addFoyer(@RequestBody Foyer foyer) {
         Foyer savedFoyer = foyerService.addFoyer(foyer);
-        return ResponseEntity.ok(savedFoyer);
-    }
+        return ResponseEntity
+                .created(URI.create("created"))
+                .body(savedFoyer);    }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Foyer> getFoyerById(@PathVariable Long id) {
@@ -46,7 +49,7 @@ public class FoyerController {
 
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Foyer> DeleteBloc(@PathVariable Long id){
+    public ResponseEntity<Foyer> DeleteFoyer(@PathVariable Long id){
             try {
                 foyerService.Delete(id);
                 return ResponseEntity.ok().build();

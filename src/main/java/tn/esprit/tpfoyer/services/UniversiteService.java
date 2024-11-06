@@ -10,4 +10,6 @@ public interface UniversiteService {
     Universite addUniversite(Universite universite);
     List<Universite> getAllUniversites();
     Optional<Universite> GetUniversiteById(Long id);
+    Optional<Universite> Delete (Long id);
+    Universite Update (Long id, Universite universite);
 }

@@ -1,17 +1,19 @@
 package tn.esprit.tpfoyer.web;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.tpfoyer.entities.Bloc;
 import tn.esprit.tpfoyer.services.BlocService;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/Bloc")
+@RequestMapping("/bloc")
 public class BlocController {
 
     private BlocService blocService;
@@ -19,13 +21,19 @@ public class BlocController {
     @GetMapping
     public ResponseEntity<List<Bloc>> getAllBlocs() {
         List<Bloc> blocs = blocService.getAllBlocs();
-        return ResponseEntity.ok(blocs);
+        if(blocs.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }else{
+            return ResponseEntity.ok(blocs);
+        }
     }
 
     @PostMapping
     public ResponseEntity<Bloc> addBloc(@RequestBody Bloc bloc) {
         Bloc savedBloc = blocService.addBloc(bloc);
-        return ResponseEntity.ok(savedBloc);
+        return ResponseEntity
+                .created(URI.create("created"))
+                .body(savedBloc);
     }
 
     @GetMapping("/{id}")
@@ -36,17 +44,14 @@ public class BlocController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Bloc> updateBloc(@PathVariable Long id, @RequestBody Bloc updatedBloc) {
-        return blocService.GetBlocById(id)
-                .map(bloc -> {
-                    bloc.setNomBloc(updatedBloc.getNomBloc());
-                    bloc.setCapaciteBloc(updatedBloc.getCapaciteBloc());
-                    Bloc savedBloc = blocService.Update(id, bloc);
-                    return ResponseEntity.ok(savedBloc);
-                })
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<Bloc> updateBloc(@PathVariable long id , @RequestBody Bloc updatedBloc) {
+        try {
+            Bloc savedBloc = blocService.Update(id, updatedBloc);
+            return ResponseEntity.ok(savedBloc);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
-
 
 
     @DeleteMapping("/{id}")

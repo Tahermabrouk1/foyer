@@ -40,6 +40,8 @@ public class BlocServiceImpl implements BlocService{
         if (existingBloc.isPresent()) {
             Bloc findbloc = existingBloc.get();
             findbloc.setNomBloc(bloc.getNomBloc());
+            findbloc.setCapaciteBloc(bloc.getCapaciteBloc());
+            findbloc.setFoyer(bloc.getFoyer());
             return BlocRepo.save(findbloc);
         } else {
             throw new RuntimeException("Bloc non trouvé avec l'ID: " + id);

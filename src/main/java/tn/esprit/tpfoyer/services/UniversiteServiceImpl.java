@@ -2,6 +2,7 @@ package tn.esprit.tpfoyer.services;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import tn.esprit.tpfoyer.entities.Reservation;
 import tn.esprit.tpfoyer.entities.Universite;
 import tn.esprit.tpfoyer.respositories.UniversiteRepo;
 
@@ -24,5 +25,26 @@ public class UniversiteServiceImpl implements UniversiteService{
     @Override
     public Optional<Universite> GetUniversiteById(Long id) {
         return universiteRepo.findById(id);
+    }
+
+    @Override
+    public Optional<Universite> Delete(Long id) {
+        Optional<Universite> universite = universiteRepo.findById(id);
+        universite.ifPresent(universiteRepo::delete);
+        return universite;
+    }
+
+    @Override
+    public Universite Update(Long id, Universite universite) {
+        Optional<Universite> existingUniversite = universiteRepo.findById(id);
+        if (existingUniversite.isPresent()) {
+            Universite findUniversite = existingUniversite.get();
+            findUniversite.setNomUniversite(universite.getNomUniversite());
+            findUniversite.setFoyer(universite.getFoyer());
+            findUniversite.setAdresse(universite.getAdresse());
+            return universiteRepo.save(findUniversite);
+        } else {
+            throw new RuntimeException("Bloc non trouvé avec l'ID: " + id);
+        }
     }
 }

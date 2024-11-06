@@ -10,4 +10,6 @@ public interface EtudiantService {
     Etudiant addEtudiant(Etudiant etudiant);
     List<Etudiant> getAllEtudiants();
     Optional<Etudiant> GetEtudiantById(Long id);
+    Optional<Etudiant> Delete (Long id);
+    Etudiant Update (Long id, Etudiant etudiant);
 }

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import tn.esprit.tpfoyer.enums.TypeChambre;
 
+import java.io.Serializable;
 import java.util.List;
 
 
@@ -12,8 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString
-public class Chambre {
+public class Chambre implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idChambre;
@@ -22,10 +22,11 @@ public class Chambre {
     @Enumerated(EnumType.STRING)
     private TypeChambre typeC;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "bloc_id" )
     private Bloc bloc;
 
-    @OneToMany(mappedBy ="chambre" , fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "chambre_id")
     private List<Reservation> reservations;
 }

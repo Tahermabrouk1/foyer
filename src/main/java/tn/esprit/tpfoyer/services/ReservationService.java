@@ -10,4 +10,6 @@ public interface ReservationService {
     Reservation addReservation(Reservation reservation);
     List<Reservation> getAllReservations();
     Optional<Reservation> GetReservationById(Long id);
+    Optional<Reservation> Delete (Long id);
+    Reservation Update (Long id, Reservation reservation);
 }
