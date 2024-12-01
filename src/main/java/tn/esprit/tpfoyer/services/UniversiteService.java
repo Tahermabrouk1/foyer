@@ -1,6 +1,5 @@
 package tn.esprit.tpfoyer.services;
 
-import tn.esprit.tpfoyer.entities.Reservation;
 import tn.esprit.tpfoyer.entities.Universite;
 
 import java.util.List;
@@ -10,6 +9,9 @@ public interface UniversiteService {
     Universite addUniversite(Universite universite);
     List<Universite> getAllUniversites();
     Optional<Universite> GetUniversiteById(Long id);
-    Optional<Universite> Delete (Long id);
+    void Delete (Long id);
     Universite Update (Long id, Universite universite);
+
+    Universite affectFoyerToUniversite(Long UniversiteId, Long foyerId);
+    Universite desaffectFoyerFromUniversite(Long universeId);
 }

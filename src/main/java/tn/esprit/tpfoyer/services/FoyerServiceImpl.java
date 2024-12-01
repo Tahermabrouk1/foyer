@@ -4,15 +4,20 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import tn.esprit.tpfoyer.entities.Bloc;
 import tn.esprit.tpfoyer.entities.Foyer;
+import tn.esprit.tpfoyer.entities.Reservation;
+import tn.esprit.tpfoyer.respositories.BlocRepo;
 import tn.esprit.tpfoyer.respositories.FoyerRepo;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class FoyerServiceImpl implements FoyerService{
     private FoyerRepo FoyerRepo;
+    private BlocRepo blocRepository;
+
     @Override
     public Foyer addFoyer(Foyer foyer) {
         return FoyerRepo.save(foyer);
@@ -29,10 +34,10 @@ public class FoyerServiceImpl implements FoyerService{
     }
 
     @Override
-    public Optional<Foyer> Delete(Long id) {
-        Optional<Foyer> foyer = FoyerRepo.findById(id);
-        foyer.ifPresent(FoyerRepo::delete);
-        return foyer;
+    public void Delete(Long id) {
+        Foyer foyer = FoyerRepo.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Foyer not found with ID: " + id));
+        FoyerRepo.delete(foyer);
     }
 
     @Override
@@ -46,5 +51,25 @@ public class FoyerServiceImpl implements FoyerService{
         } else {
             throw new RuntimeException("Bloc non trouvé avec l'ID: " + id);
         }
+    }
+
+    public Foyer affectBlocToFoyer(Long blocId, Long foyerId) {
+        Foyer foyer = FoyerRepo.findById(foyerId)
+                .orElseThrow(() -> new RuntimeException("Foyer introuvable"));
+        Bloc bloc = blocRepository.findById(blocId)
+                .orElseThrow(() -> new RuntimeException("Bloc introuvable"));
+
+        foyer.getBlocs().add(bloc);
+        return FoyerRepo.save(foyer);
+    }
+
+    public Foyer desaffectBlocFromFoyer(Long foyerId , Long blocId) {
+        Foyer foyer = FoyerRepo.findById(foyerId)
+                .orElseThrow(() -> new RuntimeException("Bloc introuvable"));
+        Bloc bloc = blocRepository.findById(blocId)
+                .orElseThrow(() -> new RuntimeException("Bloc introuvable"));
+
+        foyer.getBlocs().remove(bloc);
+        return FoyerRepo.save(foyer);
     }
 }

@@ -4,9 +4,11 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import tn.esprit.tpfoyer.entities.Chambre;
 import tn.esprit.tpfoyer.entities.Etudiant;
+import tn.esprit.tpfoyer.entities.Reservation;
 import tn.esprit.tpfoyer.respositories.EtudiantRepo;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -30,10 +32,10 @@ public class EtudiantServiceImpl implements EtudiantService{
     }
 
     @Override
-    public Optional<Etudiant> Delete(Long id) {
-        Optional<Etudiant> etudiant = etudiantRepo.findById(id);
-        etudiant.ifPresent(etudiantRepo::delete);
-        return etudiant;
+    public void Delete(Long id) {
+        Etudiant etudiant = etudiantRepo.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Etudiant not found with ID: " + id));
+        etudiantRepo.delete(etudiant);
     }
 
     @Override

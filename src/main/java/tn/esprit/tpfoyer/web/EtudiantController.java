@@ -1,5 +1,7 @@
 package tn.esprit.tpfoyer.web;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,15 +11,17 @@ import tn.esprit.tpfoyer.services.EtudiantService;
 
 import java.net.URI;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
+@Tag(name = "Gestion etudiant")
 @RestController
 @AllArgsConstructor
 @RequestMapping("/etudiant")
 public class EtudiantController {
     private EtudiantService etudiantService;
-
-    @GetMapping
+    @Operation(description = "retrivez tout les etudiant")
+    @GetMapping("/retrive-all-etudiant")
     public ResponseEntity<List<Etudiant>> getAllEtudiants() {
         List<Etudiant> etudiants = etudiantService.getAllEtudiants();
         if(etudiants.isEmpty()){
@@ -26,22 +30,23 @@ public class EtudiantController {
             return ResponseEntity.ok(etudiants);
         }
     }
-
-    @PostMapping
+    @Operation(description = "ajout etudiant")
+    @PostMapping("/ajout-etudiant")
     public ResponseEntity<Etudiant> addEtudiant(@RequestBody Etudiant etudiant) {
         Etudiant savedEtudiant = etudiantService.addEtudiant(etudiant);
         return ResponseEntity
                 .created(URI.create("created"))
                 .body(savedEtudiant);    }
 
-    @GetMapping("/{id}")
+    @Operation(description = "retrivez  etudiant avec id")
+    @GetMapping("/retrive-etudiant/{id}")
     public ResponseEntity<Etudiant> getEtudiantById(@PathVariable Long id) {
         Optional<Etudiant> etudiant = etudiantService.GetEtudiantById(id);
         return etudiant.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
-
-    @PutMapping("/{id}")
+    @Operation(description = "mise a jour etudiant")
+    @PutMapping("/update-etudiant/{id}")
     public ResponseEntity<Etudiant> updateEtudiant(@PathVariable long id , @RequestBody Etudiant updatedEtudiant) {
         try {
             Etudiant savedEtudiant = etudiantService.Update(id, updatedEtudiant);
@@ -51,12 +56,15 @@ public class EtudiantController {
         }
     }
 
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Etudiant> DeleteEtudiant(@PathVariable Long id){
-        return etudiantService.Delete(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    @Operation(description = "suppression tout les etudiant")
+    @DeleteMapping("/supression-etudiant/{id}")
+    public ResponseEntity<Void> DeleteEtudiant(@PathVariable Long id) {
+        try {
+            etudiantService.Delete(id);
+            return ResponseEntity.ok().build();
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
 

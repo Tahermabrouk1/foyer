@@ -11,6 +11,9 @@ public interface ChambreService  {
     Chambre addChambre(Chambre chambre);
     List<Chambre> getAllChambres();
     Optional<Chambre> GetChambreById(Long id);
-    Optional<Chambre> Delete (Long id);
+    void Delete (Long id);
     Chambre Update (Long id, Chambre chambre);
+    Chambre affectReservationToChambre(Long idReservation , Long idChambre);
+    Chambre deaffectReservationToChambre(Long idReservation, Long idChambre);
+    Chambre trouverChambreSelonEtudiant(long cin);
 }

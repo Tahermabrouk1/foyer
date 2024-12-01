@@ -4,15 +4,19 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import tn.esprit.tpfoyer.entities.Bloc;
 import tn.esprit.tpfoyer.entities.Chambre;
+import tn.esprit.tpfoyer.entities.Reservation;
 import tn.esprit.tpfoyer.respositories.ChambreRepo;
+import tn.esprit.tpfoyer.respositories.ReservationRepo;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class ChambreServiceImpl implements ChambreService{
 
     private ChambreRepo chambreRepo;
+    private ReservationRepo reservationRepo;
     @Override
     public Chambre addChambre(Chambre chambre) {
         return chambreRepo.save(chambre);
@@ -28,10 +32,10 @@ public class ChambreServiceImpl implements ChambreService{
         return chambreRepo.findById(id);
     }
     @Override
-    public Optional<Chambre> Delete(Long id) {
-        Optional<Chambre> chambre = chambreRepo.findById(id);
-        chambre.ifPresent(chambreRepo::delete);
-        return chambre;
+    public void Delete(Long id) {
+        Chambre chambre = chambreRepo.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Chambre not found with ID: " + id));
+        chambreRepo.delete(chambre);
     }
 
     @Override
@@ -46,5 +50,26 @@ public class ChambreServiceImpl implements ChambreService{
         } else {
             throw new RuntimeException("Chambre non trouvé avec l'ID: " + id);
         }
+    }
+
+    @Override
+    public Chambre affectReservationToChambre(Long idReservation, Long idChambre) {
+        Reservation reservation = reservationRepo.findById(idReservation).orElseThrow(() -> new NoSuchElementException("introuvable"));
+        Chambre chambre = chambreRepo.findById(idChambre).orElseThrow(() -> new NoSuchElementException("introuvable"));
+        chambre.getReservations().add(reservation);
+        return chambreRepo.save(chambre);
+    }
+
+    @Override
+    public Chambre deaffectReservationToChambre(Long idReservation, Long idChambre) {
+        Reservation reservation = reservationRepo.findById(idReservation).orElseThrow(() -> new NoSuchElementException("introuvable"));
+        Chambre chambre = chambreRepo.findById(idChambre).orElseThrow(() -> new NoSuchElementException("introuvable"));
+        chambre.getReservations().remove(reservation);
+        return chambreRepo.save(chambre);
+    }
+
+    @Override
+    public Chambre trouverChambreSelonEtudiant(long cin) {
+        return chambreRepo.trouverChambreSelonEtudiant(cin);
     }
 }

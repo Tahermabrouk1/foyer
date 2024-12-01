@@ -1,6 +1,5 @@
 package tn.esprit.tpfoyer.services;
 
-import tn.esprit.tpfoyer.entities.Foyer;
 import tn.esprit.tpfoyer.entities.Reservation;
 
 import java.util.List;
@@ -10,6 +9,8 @@ public interface ReservationService {
     Reservation addReservation(Reservation reservation);
     List<Reservation> getAllReservations();
     Optional<Reservation> GetReservationById(Long id);
-    Optional<Reservation> Delete (Long id);
+    void Delete (Long id);
     Reservation Update (Long id, Reservation reservation);
+    Reservation affectEtudiantToReservation(Long idReservation , Long idEtudiant);
+    Reservation deaffectEtudiantToReservation(Long idReservation, Long idEtudiant);
 }
